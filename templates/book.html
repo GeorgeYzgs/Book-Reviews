@@ -1,0 +1,75 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{ book['title'] }}
+{% endblock %}
+
+{% block main %}
+    <h4>Book information & Reviews:</h4>
+    <br>
+    <div class="jumbotron">
+        <div class="row">
+            <div class="col-md-4">
+                <img src="http://covers.openlibrary.org/b/isbn/{{ book['isbn'] }}-L.jpg"
+                     alt="{{ book['title'] }}">
+            </div>
+            <div class="col-md-4">
+                <h4>{{ book['title'] }}</h4>
+                <br>
+                <h6>{{ book['author'] }}</h6>
+                <h6>Published in : {{ book['year'] }}</h6>
+                <h6>ISBN: {{ book['isbn'] }}</h6>
+                {% if goodreads %}
+                    <br>
+                    <br>
+                    <h6>Goodreads ratings count: {{ goodreads['work_ratings_count'] }}</h6>
+                    <h6>Goodreads average rating: {{ goodreads['average_rating'] }}</h6>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <br>
+    {% if not comment %}
+        <h6>You can submit your own review of this book below:</h6>
+        <form action="/book/{{ book['isbn'] }}" method="post">
+            <div class="form-group">
+                <label for="rating">Rating:</label>
+                <select class="form-control" name="rating" id="rating">
+                    <option value="1">&#9733;&#9734;&#9734;&#9734;&#9734;</option>
+                    <option value="2">&#9733;&#9733;&#9734;&#9734;&#9734;</option>
+                    <option value="3">&#9733;&#9733;&#9733;&#9734;&#9734;</option>
+                    <option value="4">&#9733;&#9733;&#9733;&#9733;&#9734;</option>
+                    <option value="5">&#9733;&#9733;&#9733;&#9733;&#9733;</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="context"> Comment: </label>
+                <input autocomplete="off" autofocus class="form-control" id="context" name="context" type="text"
+                       required>
+            </div>
+            <div class="form-group">
+                <input class="form-control" name="book_id" type="text" value="{{ book['id'] }}" hidden>
+            </div>
+            <button class="btn btn-primary" type="submit">Submit Review</button>
+        </form>
+    {% endif %}
+    <br>
+    {% if reviews %}
+        <h4>User reviews:</h4>
+        {% for review in reviews %}
+            <div class="jumbotron">
+                By: <b>{{ review['username'] }}</b>, {{ review['time'] }}
+                <br>
+                Rating:
+                {% for i in range(review['rating']) %}
+                    &#9733;
+                {% endfor %}
+                <hr>
+                <i>{{ review['context'] }}</i>
+            </div>
+            <br>
+        {% endfor %}
+    {% else %}
+        <h5>This book has no reviews! Add one yourself</h5>
+    {% endif %}
+{% endblock %}
